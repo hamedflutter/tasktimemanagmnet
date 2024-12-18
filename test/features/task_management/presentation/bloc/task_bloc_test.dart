@@ -1,227 +1,128 @@
-import 'package:bloc_test/bloc_test.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import 'package:dartz/dartz.dart';
 import 'package:tasktimetracker/core/error/failures.dart';
 import 'package:tasktimetracker/core/usecases/usecase.dart';
 import 'package:tasktimetracker/features/task_management/domain/entities/task.dart';
-import 'package:tasktimetracker/features/task_management/domain/usecases/create_tasks_usecase.dart';
-import 'package:tasktimetracker/features/task_management/domain/usecases/delete_tasks_usecase.dart';
+import 'package:tasktimetracker/features/task_management/domain/repositories/todoist_local_repository.dart';
+import 'package:tasktimetracker/features/task_management/domain/repositories/todoist_remote_repository.dart';
 import 'package:tasktimetracker/features/task_management/domain/usecases/get_tasks_usecase.dart';
-import 'package:tasktimetracker/features/task_management/domain/usecases/task_params.dart';
-import 'package:tasktimetracker/features/task_management/domain/usecases/update_tasks_usecase.dart';
-import 'package:tasktimetracker/features/task_management/presentation/bloc/task_bloc.dart';
 
-class MockGetTasksUseCase extends Mock implements GetTasksUseCase {}
+// Generate mock classes
+import '../../domain/usecase/get_tasks_usecase_test.mocks.dart';
+import 'task_bloc_test.mocks.dart' as mockGetTasks;
 
-class MockDeleteTasksUseCase extends Mock implements DeleteTasksUseCase {}
-
-class MockUpdateTasksUseCase extends Mock implements UpdateTasksUseCase {}
-
-class MockCreateTasksUseCase extends Mock implements CreateTasksUseCase {}
-
+@GenerateMocks(
+    [TodoistLocalRepository, TodoistRemoteRepository, GetTasksUseCase])
 void main() {
-  late MockGetTasksUseCase mockGetTasksUseCase;
-  late MockDeleteTasksUseCase mockDeleteTasksUseCase;
-  late MockUpdateTasksUseCase mockUpdateTasksUseCase;
-  late MockCreateTasksUseCase mockCreateTasksUseCase;
-  late TaskBloc taskBloc;
+  late MockTodoistLocalRepository mockLocalRepository;
+  late MockTodoistRemoteRepository mockRemoteRepository;
+  late mockGetTasks.MockGetTasksUseCase mockUseCase;
+  late GetTasksUseCase useCase;
 
   setUp(() {
-    mockGetTasksUseCase = MockGetTasksUseCase();
-    mockDeleteTasksUseCase = MockDeleteTasksUseCase();
-    mockUpdateTasksUseCase = MockUpdateTasksUseCase();
-    mockCreateTasksUseCase = MockCreateTasksUseCase();
-    taskBloc = TaskBloc(
-      getTasksUseCase: mockGetTasksUseCase,
-      deleteTaskUseCase: mockDeleteTasksUseCase,
-      updateTaskUseCase: mockUpdateTasksUseCase,
-      createTasksUseCase: mockCreateTasksUseCase,
-    );
+    mockLocalRepository = MockTodoistLocalRepository();
+    mockRemoteRepository = MockTodoistRemoteRepository();
+    mockUseCase = mockGetTasks.MockGetTasksUseCase();
+    useCase = GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
   });
 
-  group('TaskBloc', () {
-    test('initial state should be TaskInitial', () {
-      expect(taskBloc.state, equals(TaskInitial()));
-    });
-
-    blocTest<TaskBloc, TaskState>(
-      '''FetchTasksEvent emits [TaskLoading, TaskLoaded] when fetching tasks is successful''',
-      build: () {
-        when(mockGetTasksUseCase(NoParams()))
-            .thenAnswer((_) async => const Right([
-                  TaskEntity(
-                    id: '1',
-                    content: 'Test Task',
-                    description: null,
-                    projectId: null,
-                    sectionId: null,
-                    parentId: null,
-                    order: null,
-                    labels: null,
-                    priority: null,
-                    dueString: null,
-                    dueDate: null,
-                    dueDatetime: null,
-                    dueLang: null,
-                    assigneeId: null,
-                    isCompleted: null,
-                    commentCount: null,
-                    createdAt: null,
-                    duration: null,
-                    url: null,
-                  )
-                ]));
-        return taskBloc;
-      },
-      act: (bloc) => bloc.add(FetchTasksEvent()),
-      expect: () => [
-        TaskLoading(),
-        const TaskLoaded(tasks: [
-          TaskEntity(
-            id: '1',
-            content: 'Test Task',
-            description: null,
-            projectId: null,
-            sectionId: null,
-            parentId: null,
-            order: null,
-            labels: null,
-            priority: null,
-            dueString: null,
-            dueDate: null,
-            dueDatetime: null,
-            dueLang: null,
-            assigneeId: null,
-            isCompleted: null,
-            commentCount: null,
-            createdAt: null,
-            duration: null,
-            url: null,
-          )
-        ]),
-      ],
-      verify: (_) {
-        verify(mockGetTasksUseCase(NoParams())).called(1);
-      },
-    );
-
-    blocTest<TaskBloc, TaskState>(
-    'FetchTasksEvent emits [TaskLoading, TaskError] when fetching tasks fails',
-      build: () {
-        when(mockGetTasksUseCase(NoParams())).thenAnswer(
-            (_) async => const Left(ServerFailure(message: 'Server Error')));
-        return taskBloc;
-      },
-      act: (bloc) => bloc.add(FetchTasksEvent()),
-      expect: () => [
-        TaskLoading(),
-        const TaskError(message: 'Failed to fetch tasks: Server Error'),
-      ],
-      verify: (_) {
-        verify(mockGetTasksUseCase(NoParams())).called(1);
-      },
-    );
-
-    blocTest<TaskBloc, TaskState>(
-      '''CreateTaskEvent emits [TaskCreating, TaskCreated] when creating a task is successful''',
-      build: () {
-        when(mockCreateTasksUseCase(const TaskParams(
-            task: TaskEntity(
-          id: '1', // Example TaskEntity data
-          content: 'Test Task',
-          description: null,
-          projectId: null,
-          sectionId: null,
-          parentId: null,
-          order: null,
-          labels: null,
-          priority: null,
-          dueString: null,
-          dueDate: null,
-          dueDatetime: null,
-          dueLang: null,
-          assigneeId: null,
-          isCompleted: null,
-          commentCount: null,
-          createdAt: null,
-          duration: null,
-          url: null,
-        )))).thenAnswer((_) async => const Right(TaskEntity(
-              id: '1',
-              content: 'Test Task',
-              description: null,
-              projectId: null,
-              sectionId: null,
-              parentId: null,
-              order: null,
-              labels: null,
-              priority: null,
-              dueString: null,
-              dueDate: null,
-              dueDatetime: null,
-              dueLang: null,
-              assigneeId: null,
-              isCompleted: null,
-              commentCount: null,
-              createdAt: null,
-              duration: null,
-              url: null,
-            )));
-
-        return taskBloc;
-      },
-      act: (bloc) => bloc.add(
-        CreateTaskEvent(
-          task: TaskEntity(
-            id: '1', // Example ID
-            content: 'Test Task',
-            description: null,
-            projectId: null,
-            sectionId: null,
-            parentId: null,
-            order: null,
-            labels: null,
-            priority: null,
-            dueString: null,
-            dueDate: null,
-            dueDatetime: null,
-            dueLang: null,
-            assigneeId: null,
-            isCompleted: null,
-            commentCount: null,
-            createdAt: null,
-            duration: null,
-            url: null,
-          ),
-        ),
+  test('should return tasks from the local repository when they are available',
+      () async {
+    // Arrange
+    final mockTasks = [
+      TaskEntity(
+        id: '1',
+        content: 'Test Task',
+        description: 'Test Description',
+        projectId: '123',
+        sectionId: '456',
+        parentId: null,
+        order: 1,
+        labels: [],
+        priority: 1,
+        dueString: null,
+        dueDate: null,
+        dueDatetime: null,
+        dueLang: null,
+        assigneeId: null,
+        isCompleted: false,
+        commentCount: 0,
+        createdAt: DateTime.now(),
+        duration: null,
+        url: 'http://example.com',
       ),
-      expect: () => [
-        TaskCreating(),
-        TaskCreated(
-          task: TaskEntity(
-            id: '1', // Example ID
-            content: 'Test Task',
-            description: null,
-            projectId: null,
-            sectionId: null,
-            parentId: null,
-            order: null,
-            labels: null,
-            priority: null,
-            dueString: null,
-            dueDate: null,
-            dueDatetime: null,
-            dueLang: null,
-            assigneeId: null,
-            isCompleted: null,
-            commentCount: null,
-            createdAt: null,
-            duration: null,
-            url: null,
-          ),
-        ),
-      ],
-    );
+    ];
+    when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => mockTasks);
+    when(mockUseCase(NoParams())).thenAnswer(
+        (_) async => Right(mockTasks)); // Mocking the use case for this test
+
+    // Act
+    final result = await useCase(NoParams());
+
+    // Assert
+    expect(result, Right(mockTasks));
+    verify(mockLocalRepository.getAllTasks()).called(1);
+    verifyNever(mockRemoteRepository.getTasks());
+  });
+
+  test(
+      'should fetch tasks from remote repository when no local tasks are available',
+      () async {
+    // Arrange
+    final mockTasks = [
+      TaskEntity(
+        id: '1',
+        content: 'Remote Task',
+        description: 'Test Description',
+        projectId: '123',
+        sectionId: '456',
+        parentId: null,
+        order: 1,
+        labels: [],
+        priority: 1,
+        dueString: null,
+        dueDate: null,
+        dueDatetime: null,
+        dueLang: null,
+        assigneeId: null,
+        isCompleted: false,
+        commentCount: 0,
+        createdAt: DateTime.now(),
+        duration: null,
+        url: 'http://example.com',
+      ),
+    ];
+    when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
+    when(mockRemoteRepository.getTasks())
+        .thenAnswer((_) async => Right(mockTasks));
+    when(mockUseCase(NoParams())).thenAnswer(
+        (_) async => Right(mockTasks)); // Mocking the use case for this test
+
+    // Act
+    final result = await useCase(NoParams());
+
+    // Assert
+    expect(result, Right(mockTasks));
+    verify(mockLocalRepository.getAllTasks()).called(1);
+    verify(mockRemoteRepository.getTasks()).called(1);
+  });
+
+  test('should return failure when remote fetch fails', () async {
+    // Arrange
+    when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
+    when(mockRemoteRepository.getTasks())
+        .thenAnswer((_) async => const Left(ServerFailure(message: "Error")));
+    when(mockUseCase(NoParams())).thenAnswer((_) async => const Left(
+        ServerFailure(message: "Error"))); // Mocking the use case for failure
+
+    // Act
+    final result = await useCase(NoParams());
+
+    // Assert
+    expect(result, const Left(ServerFailure(message: "Error")));
+    verify(mockLocalRepository.getAllTasks()).called(1);
+    verify(mockRemoteRepository.getTasks()).called(1);
   });
 }

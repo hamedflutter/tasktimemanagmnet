@@ -1,45 +1,51 @@
 name: Flutter CI/CD
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events for specified branches
   push:
     branches: [ main, develop ]
-  # Allows manual triggering of the workflow
+  pull_request:
+    branches: [ main, develop ]
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs
 jobs:
-  # Job for testing and building the app
   test_and_build:
-    # Runner type
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed
     steps:
-      # Checks-out repository under $GITHUB_WORKSPACE
       - uses: actions/checkout@v3
       
-      # Setup Java (required for Flutter)
+      # Setup Java
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '17'
+      
+      # Setup Dart SDK
+      - name: Setup Dart SDK
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.2.0'
       
       # Setup Flutter
       - name: Flutter action
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.0'
+          flutter-version: '3.16.0'
+          channel: 'stable'
+          cache: true
       
-      # Enable Flutter web
-      - name: Enable Flutter web
-        run: flutter config --enable-web
+      # Verify installation
+      - name: Verify Flutter installation
+        run: |
+          flutter --version
+          dart --version
       
       # Get dependencies
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter pub upgrade
       
       # Run code analysis
       - name: Analyze code
@@ -53,26 +59,6 @@ jobs:
       - name: Build Android APK
         run: flutter build apk
       
-      # Build iOS app (on macOS runners)
-      - name: Build iOS app
-        run: flutter build ios --release --no-codesign
-      
       # Build Web app
       - name: Build Web app
         run: flutter build web
-
-  # Deployment job (optional)
-  deploy:
-    needs: test_and_build
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: actions/checkout@v3
-      
-      # Example: Deploy to Firebase Hosting
-      - name: Deploy to Firebase
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channelId: live
-          projectId: your-firebase-project-id

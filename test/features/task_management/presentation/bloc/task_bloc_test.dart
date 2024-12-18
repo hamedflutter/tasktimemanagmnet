@@ -68,7 +68,7 @@ void main() {
   });
 
   test(
-      'should fetch tasks from remote repository when no local tasks are available',
+  'should fetch tasks from remote repository when no local tasks are available',
       () async {
     // Arrange
     final mockTasks = [

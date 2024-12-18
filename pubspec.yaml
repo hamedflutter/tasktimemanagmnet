@@ -4,8 +4,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
-  flutter: '>=3.10.0'
+  sdk: ^3.5.1
 
 dependencies:
   flutter:
@@ -17,14 +16,14 @@ dependencies:
 
   # Networking
   dio: ^5.3.2
-  connectivity_plus: ^6.1.1
+  connectivity_plus: ^4.0.2
 
   # Local Storage
   hive: ^2.2.3
   hive_flutter: ^1.1.0
 
   # Dependency Injection
-  get_it: ^8.0.3
+  get_it: ^7.6.0
 
   # Functional Programming & Error Handling
   dartz: ^0.10.1
@@ -33,7 +32,7 @@ dependencies:
   logger: ^2.0.2
 
   # Date Handling
-  intl: ^0.20.1
+  intl: ^0.18.1
 
   #Kanbon board
   flutter_boardview_kanban: ^1.0.1
@@ -68,7 +67,7 @@ dev_dependencies:
 
   
   # Static Analysis
-  flutter_lints: ^5.0.0
+  flutter_lints: ^2.0.3
 
 flutter:
   uses-material-design: true

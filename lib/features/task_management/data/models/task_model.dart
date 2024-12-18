@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import '../../domain/entities/task.dart';
 
 class TaskModel extends TaskEntity {

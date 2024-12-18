@@ -12,7 +12,6 @@ import 'package:tasktimetracker/features/task_management/domain/usecases/update_
 
 import 'get_tasks_usecase_test.mocks.dart';
 
-
 void main() {
   late MockTodoistLocalRepository mockLocalRepository;
   late MockTodoistRemoteRepository mockRemoteRepository;
@@ -28,7 +27,8 @@ void main() {
       final tasks = [TaskEntity(id: '1', content: 'Task 1')];
       when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => tasks);
 
-      final useCase = GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(NoParams());
@@ -39,13 +39,17 @@ void main() {
       verifyNoMoreInteractions(mockRemoteRepository);
     });
 
-    test('should fetch tasks from remote and sync to local if local storage is empty', () async {
+    test(
+  'should fetch tasks from remote and sync to local if local storage is empty',
+        () async {
       // Arrange
       final tasks = [TaskEntity(id: '2', content: 'Task 2')];
       when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
-      when(mockRemoteRepository.getTasks()).thenAnswer((_) async => Right(tasks));
+      when(mockRemoteRepository.getTasks())
+          .thenAnswer((_) async => Right(tasks));
 
-      final useCase = GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(NoParams());
@@ -61,9 +65,11 @@ void main() {
       // Arrange
       final failure = ServerFailure(message: "");
       when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
-      when(mockRemoteRepository.getTasks()).thenAnswer((_) async => Left(failure));
+      when(mockRemoteRepository.getTasks())
+          .thenAnswer((_) async => Left(failure));
 
-      final useCase = GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(NoParams());
@@ -79,9 +85,11 @@ void main() {
     test('should create a task remotely and sync to local storage', () async {
       // Arrange
       final task = TaskEntity(id: '3', content: 'Task 3');
-      when(mockRemoteRepository.createTask(task)).thenAnswer((_) async => Right(task));
+      when(mockRemoteRepository.createTask(task))
+          .thenAnswer((_) async => Right(task));
 
-      final useCase = CreateTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          CreateTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(TaskParams(task: task));
@@ -96,9 +104,11 @@ void main() {
       // Arrange
       final task = TaskEntity(id: '4', content: 'Task 4');
       final failure = ServerFailure(message: '');
-      when(mockRemoteRepository.createTask(task)).thenAnswer((_) async => Left(failure));
+      when(mockRemoteRepository.createTask(task))
+          .thenAnswer((_) async => Left(failure));
 
-      final useCase = CreateTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          CreateTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(TaskParams(task: task));
@@ -114,9 +124,11 @@ void main() {
     test('should delete a task remotely and sync local storage', () async {
       // Arrange
       final task = TaskEntity(id: '5', content: 'Task 5');
-      when(mockRemoteRepository.deleteTask(task.id)).thenAnswer((_) async => Right(null));
+      when(mockRemoteRepository.deleteTask(task.id))
+          .thenAnswer((_) async => Right(null));
 
-      final useCase = DeleteTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          DeleteTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(TaskParams(task: task));
@@ -131,9 +143,11 @@ void main() {
       // Arrange
       final task = TaskEntity(id: '6', content: 'Task 6');
       final failure = ServerFailure(message: '');
-      when(mockRemoteRepository.deleteTask(task.id)).thenAnswer((_) async => Left(failure));
+      when(mockRemoteRepository.deleteTask(task.id))
+          .thenAnswer((_) async => Left(failure));
 
-      final useCase = DeleteTasksUseCase(mockLocalRepository, mockRemoteRepository);
+      final useCase =
+          DeleteTasksUseCase(mockLocalRepository, mockRemoteRepository);
 
       // Act
       final result = await useCase(TaskParams(task: task));
@@ -164,7 +178,8 @@ void main() {
     test('should return failure if local update fails', () async {
       // Arrange
       final task = TaskEntity(id: '8', content: 'Task 8');
-      when(mockLocalRepository.updateTask(task)).thenThrow(Exception('Hive Error'));
+      when(mockLocalRepository.updateTask(task))
+          .thenThrow(Exception('Hive Error'));
 
       final useCase = UpdateTasksUseCase(mockLocalRepository);
 

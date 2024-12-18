@@ -46,7 +46,7 @@ void main() {
     });
 
     blocTest<TaskBloc, TaskState>(
-      'FetchTasksEvent emits [TaskLoading, TaskLoaded] when fetching tasks is successful',
+      '''FetchTasksEvent emits [TaskLoading, TaskLoaded] when fetching tasks is successful''',
       build: () {
         when(mockGetTasksUseCase(NoParams()))
             .thenAnswer((_) async => const Right([
@@ -124,7 +124,7 @@ void main() {
     );
 
     blocTest<TaskBloc, TaskState>(
-      'CreateTaskEvent emits [TaskCreating, TaskCreated] when creating a task is successful',
+      '''CreateTaskEvent emits [TaskCreating, TaskCreated] when creating a task is successful''',
       build: () {
         when(mockCreateTasksUseCase(const TaskParams(
             task: TaskEntity(
@@ -223,86 +223,5 @@ void main() {
         ),
       ],
     );
-
-    // blocTest<TaskBloc, TaskState>(
-    //   'UpdateTaskEvent emits [TaskUpdating, TaskUpdated] when updating a task is successful',
-    //   build: () {
-    //     when(mockUpdateTasksUseCase(anyThat(isA<TaskParams>()))).thenAnswer(
-    //       (_) async => const Right(
-    //         TaskEntity(
-    //           id: '1', // ID type match
-    //           content: 'Updated Task',
-    //           description: null,
-    //           projectId: null,
-    //           sectionId: null,
-    //           parentId: null,
-    //           order: null,
-    //           labels: null,
-    //           priority: null,
-    //           dueString: null,
-    //           dueDate: null,
-    //           dueDatetime: null,
-    //           dueLang: null,
-    //           assigneeId: null,
-    //           isCompleted: null,
-    //           commentCount: null,
-    //           createdAt: null,
-    //           duration: null,
-    //           url: null,
-    //         ),
-    //       ),
-    //     );
-    //     return taskBloc;
-    //   },
-    //   act: (bloc) => bloc.add(UpdateTaskEvent(
-    //     task: TaskEntity(
-    //       id: '1',
-    //       content: 'Updated Task',
-    //       description: null,
-    //       projectId: null,
-    //       sectionId: null,
-    //       parentId: null,
-    //       order: null,
-    //       labels: null,
-    //       priority: null,
-    //       dueString: null,
-    //       dueDate: null,
-    //       dueDatetime: null,
-    //       dueLang: null,
-    //       assigneeId: null,
-    //       isCompleted: null,
-    //       commentCount: null,
-    //       createdAt: null,
-    //       duration: null,
-    //       url: null,
-    //     ),
-    //   )),
-    //   expect: () => [
-    //     TaskUpdating(),
-    //     TaskUpdated(
-    //       task: TaskEntity(
-    //         id: '1',
-    //         content: 'Updated Task',
-    //         description: null,
-    //         projectId: null,
-    //         sectionId: null,
-    //         parentId: null,
-    //         order: null,
-    //         labels: null,
-    //         priority: null,
-    //         dueString: null,
-    //         dueDate: null,
-    //         dueDatetime: null,
-    //         dueLang: null,
-    //         assigneeId: null,
-    //         isCompleted: null,
-    //         commentCount: null,
-    //         createdAt: null,
-    //         duration: null,
-    //         url: null,
-    //       ),
-    //     ),
-    //   ],
-    // );
   });
 }

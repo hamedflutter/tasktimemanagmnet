@@ -21,7 +21,7 @@ class DeleteTasksUseCase implements UseCase<void, TaskParams> {
     return failureOrVoid.fold(
       (failure) => Left(failure), // Return failure if remote deletion failed
       (_) async {
-        // Sync the task deletion to local storage (Hive) if deletion is successful
+    // Sync the task deletion to local storage (Hive) if deletion is successful
         await localRepository.deleteTask(taskId);
         return Right(null);
       },

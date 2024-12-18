@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 class TaskTimerService {
   final String taskId;
   Box? _taskBox; // Hive box for storing the task data
-  
+
   // Timer-related variables
   Timer? _timer;
   Duration _elapsedTime = Duration.zero;
@@ -37,10 +37,10 @@ class TaskTimerService {
       isRunning = true;
       _timer = Timer.periodic(const Duration(seconds: 1), (_) {
         _elapsedTime += const Duration(seconds: 1);
-        
+
         // Save elapsed time to Hive
         _taskBox?.put('${taskId}_elapsedTime', _elapsedTime.inSeconds);
-        
+
         // Add to stream
         _timerStreamController.add(_elapsedTime);
       });
@@ -51,7 +51,7 @@ class TaskTimerService {
     if (isRunning) {
       _timer?.cancel();
       isRunning = false;
-      
+
       // Persist the stopped time to Hive
       _taskBox?.put('${taskId}_elapsedTime', _elapsedTime.inSeconds);
     }
@@ -60,10 +60,10 @@ class TaskTimerService {
   void reset() {
     stop();
     _elapsedTime = Duration.zero;
-    
+
     // Remove saved time from Hive
     _taskBox?.delete('${taskId}_elapsedTime');
-    
+
     // Add reset time to stream
     _timerStreamController.add(_elapsedTime);
   }

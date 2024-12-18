@@ -175,21 +175,4 @@ class MockTodoistRemoteRepository extends _i1.Mock
           ),
         )),
       ) as _i4.Future<_i2.Either<_i7.Failure, _i5.TaskEntity>>);
-
-  @override
-  _i4.Future<_i2.Either<_i7.Failure, _i5.TaskEntity>> getTask(String? taskId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getTask,
-          [taskId],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i7.Failure, _i5.TaskEntity>>.value(
-            _FakeEither_0<_i7.Failure, _i5.TaskEntity>(
-          this,
-          Invocation.method(
-            #getTask,
-            [taskId],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i7.Failure, _i5.TaskEntity>>);
 }

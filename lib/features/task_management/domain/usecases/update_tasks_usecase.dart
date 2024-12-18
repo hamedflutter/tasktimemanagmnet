@@ -21,7 +21,7 @@ class UpdateTasksUseCase implements UseCase<TaskEntity, TaskParams> {
       // Return the updated task wrapped in a Right (success) result
       return Right(task);
     } catch (e) {
-      // If an error occurs, wrap it in a Failure and return Left (failure) result
+    // If an error occurs, wrap it in a Failure and return Left (failure) result
       return Left(LocalFailure(message: e.toString()));
     }
   }

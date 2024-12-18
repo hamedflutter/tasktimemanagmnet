@@ -60,7 +60,7 @@ class GetTasksUseCase implements UseCase<List<TaskEntity>, NoParams> {
         duration: task.duration,
         url: task.url,
       );
-      await localRepository.addTask(taskModel); // Add each task to local storage
+      await localRepository.addTask(taskModel);// Add each task to local storage
     }
   }
 }

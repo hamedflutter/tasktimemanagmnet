@@ -9,7 +9,6 @@ import 'package:tasktimetracker/features/task_management/domain/repositories/tod
 import 'package:tasktimetracker/features/task_management/domain/repositories/todoist_remote_repository.dart';
 import 'package:tasktimetracker/features/task_management/domain/usecases/get_tasks_usecase.dart';
 
-
 // Generate mock classes
 @GenerateMocks([TodoistLocalRepository, TodoistRemoteRepository])
 import 'get_tasks_usecase_test.mocks.dart';
@@ -25,7 +24,8 @@ void main() {
     useCase = GetTasksUseCase(mockLocalRepository, mockRemoteRepository);
   });
 
-  test('should return tasks from the local repository when they are available', () async {
+  test('should return tasks from the local repository when they are available',
+      () async {
     // Arrange
     final mockTasks = [
       TaskEntity(
@@ -61,7 +61,9 @@ void main() {
     verifyNever(mockRemoteRepository.getTasks());
   });
 
-  test('should fetch tasks from remote repository when no local tasks are available', () async {
+  test(
+ 'should fetch tasks from remote repository when no local tasks are available',
+      () async {
     // Arrange
     final mockTasks = [
       TaskEntity(
@@ -87,7 +89,8 @@ void main() {
       ),
     ];
     when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
-    when(mockRemoteRepository.getTasks()).thenAnswer((_) async => Right(mockTasks));
+    when(mockRemoteRepository.getTasks())
+        .thenAnswer((_) async => Right(mockTasks));
 
     // Act
     final result = await useCase(NoParams());
@@ -101,7 +104,8 @@ void main() {
   test('should return failure when remote fetch fails', () async {
     // Arrange
     when(mockLocalRepository.getAllTasks()).thenAnswer((_) async => []);
-    when(mockRemoteRepository.getTasks()).thenAnswer((_) async => const Left(ServerFailure(message: "Error")));
+    when(mockRemoteRepository.getTasks())
+        .thenAnswer((_) async => const Left(ServerFailure(message: "Error")));
 
     // Act
     final result = await useCase(NoParams());

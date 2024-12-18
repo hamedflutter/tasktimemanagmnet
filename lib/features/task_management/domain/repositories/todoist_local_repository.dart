@@ -1,4 +1,3 @@
-
 import '../../domain/entities/task.dart';
 
 abstract class TodoistLocalRepository {

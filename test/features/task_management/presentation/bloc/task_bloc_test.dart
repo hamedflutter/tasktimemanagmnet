@@ -107,7 +107,7 @@ void main() {
     );
 
     blocTest<TaskBloc, TaskState>(
-      'FetchTasksEvent emits [TaskLoading, TaskError] when fetching tasks fails',
+    'FetchTasksEvent emits [TaskLoading, TaskError] when fetching tasks fails',
       build: () {
         when(mockGetTasksUseCase(NoParams())).thenAnswer(
             (_) async => const Left(ServerFailure(message: 'Server Error')));

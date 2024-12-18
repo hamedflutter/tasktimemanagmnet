@@ -15,10 +15,8 @@ class RichTextItem extends AppFlowyGroupItem {
     required this.projectId,
   });
 
-  @override
   String get itemId => id;
 
-  @override
   Widget build(BuildContext context) {
     return Container();
   }

@@ -337,7 +337,6 @@ class _TasksPageState extends State<TasksPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Icon(Icons.attachment, size: 16, color: Colors.grey),
               IconButton(
                 icon: const Icon(Icons.more_vert, size: 16),
                 onPressed: () {

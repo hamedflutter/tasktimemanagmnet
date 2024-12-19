@@ -99,7 +99,7 @@ class _TaskFormPageState extends State<TaskFormPage> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            _taskEntity == null ? 'Create New Task' : 'Edit Task',
+              'Task',
             style: const TextStyle(
               color: Colors.black,
               fontWeight: FontWeight.bold,

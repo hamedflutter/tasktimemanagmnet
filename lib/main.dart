@@ -5,7 +5,7 @@ import 'package:tasktimetracker/core/di/injection_container.dart' as di;
 import 'package:tasktimetracker/features/task_management/presentation/bloc/task_bloc.dart';
 
 import 'features/task_management/data/models/task_model_hive.dart';
-import 'features/task_management/presentation/pages/create_task_page.dart';
+import 'features/task_management/presentation/pages/task_page.dart';
 import 'features/task_management/presentation/pages/tasks_page.dart';
 
 void main() async {

@@ -201,10 +201,16 @@ class _TasksPageState extends State<TasksPage> {
           height: 50,
           margin: config.groupBodyPadding,
           onAddButtonClick: () {
+            final taskEntity = TaskEntity(
+              id: "",
+              content: "",
+              description: "",
+              projectId: columnData.headerData.groupName,
+            );
             Navigator.pushNamed(
               context,
               '/taskForm',
-              arguments: columnData.headerData.groupName,
+              arguments: taskEntity,
             );
             debugPrint('Add task to ${columnData.headerData.groupName}');
           },

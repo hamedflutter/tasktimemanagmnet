@@ -56,14 +56,4 @@ jobs:
       # Build Android APK
       - name: Build Android APK
         run: flutter build apk --release
-      
-      # Build Web app
-      - name: Build Web app
-        run: flutter build web
-      
-      # Optional: Upload build artifacts
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+    

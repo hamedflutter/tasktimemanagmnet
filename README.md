@@ -20,4 +20,30 @@ Task Time Manager is a Flutter-based application designed to help you effectivel
   - Clean and intuitive design for seamless task management.
 
 ---
+1. **Clone the repository**:
+   ```bash
+   git clone git@github.com:hamedflutter/tasktimemanagmnet.git
+2. Install dependencies:
+  - flutter pub get
+    
+3. Run the app:
+  - flutter run
+
+## How to Use
+1. Create a Task:
+   - Tap the Add Task button.
+   - Enter a title and description for the task, then save.
+
+2. Move Tasks Between Columns:
+   - Drag and drop tasks between columns to change their status.
+
+3. Start and Stop Time Tracking:
+   - Tap the Start Timer button on a task to begin tracking time.
+   - Tap the Stop Timer button to stop tracking.
+
+4. Edit a Task:
+
+   - Select a task and tap the Edit button to modify its details.
+
+   
 

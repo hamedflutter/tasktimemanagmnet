@@ -43,3 +43,4 @@ Task Time Manager is a Flutter-based application designed to help you effectivel
 
 4. Edit a Task:
    - Select a task and tap the Edit button to modify its details.
+![photo_2024-12-20_23-45-09](https://github.com/user-attachments/assets/82f68883-94ca-4cf7-865b-d85a0b8465b6)

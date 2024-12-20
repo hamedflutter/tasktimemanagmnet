@@ -42,8 +42,4 @@ Task Time Manager is a Flutter-based application designed to help you effectivel
    - Tap the Stop Timer button to stop tracking.
 
 4. Edit a Task:
-
    - Select a task and tap the Edit button to modify its details.
-
-   
-

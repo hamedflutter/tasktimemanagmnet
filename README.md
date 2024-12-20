@@ -1,16 +1,23 @@
-# tasktimetracker
+# Task Time Manager
 
-A new Flutter project.
+Task Time Manager is a Flutter-based application designed to help you effectively manage your tasks. The app allows users to create tasks, move them between columns (e.g., To-Do, In Progress, Completed), and track the time spent on each task. Users can also edit task details as needed.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- **Task Management**:
+  - Create new tasks with customizable titles and descriptions.
+  - Edit existing tasks to update details.
+  - Move tasks between columns to reflect their progress.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Time Tracking**:
+  - Start and stop a timer for each task to record the time spent.
+  - View total time spent on individual tasks.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **User-Friendly Interface**:
+  - Drag-and-drop functionality for moving tasks between columns.
+  - Clean and intuitive design for seamless task management.
+
+---
+

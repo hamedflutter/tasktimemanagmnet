@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/usecases/usecase.dart';
-import '../../../../core/error/failures.dart'; // Import the Failure classes
+import '../../../../core/error/failures.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/usecases/create_tasks_usecase.dart';
 import '../../domain/usecases/delete_tasks_usecase.dart';
@@ -38,9 +38,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       final failureOrTasks = await getTasksUseCase(NoParams());
 
       failureOrTasks.fold(
-        (failure) {
-          emit(TaskError(message: _mapFailureToMessage(failure)));
-        },
+        (failure) => emit(TaskError(message: _mapFailureToMessage(failure))),
         (tasks) => emit(TaskLoaded(tasks: tasks)),
       );
     } catch (e) {
@@ -62,15 +60,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
             await deleteTaskUseCase(TaskParams(task: taskToDelete));
 
         failureOrSuccess.fold(
-          (failure) {
-            emit(TaskError(message: _mapFailureToMessage(failure)));
-          },
-          (_) {
-            final updatedTasks = currentState.tasks
-                .where((task) => task.id != event.taskId)
-                .toList();
-            emit(TaskLoaded(tasks: updatedTasks));
-          },
+          (failure) => emit(TaskError(message: _mapFailureToMessage(failure))),
+          (_) => emit(TaskLoaded(
+              tasks: _removeTaskFromList(currentState.tasks, event.taskId))),
         );
       } catch (e) {
         emit(TaskError(message: 'Failed to delete task: ${e.toString()}'));
@@ -86,17 +78,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           await createTasksUseCase(TaskParams(task: event.task));
 
       failureOrSuccess.fold(
-        (failure) {
-          emit(TaskError(message: _mapFailureToMessage(failure)));
-        },
-        (createdTask) {
-          if (state is TaskLoaded) {
-            final currentTasks = (state as TaskLoaded).tasks;
-            emit(TaskLoaded(tasks: [...currentTasks, createdTask]));
-          } else {
-            emit(TaskCreated(task: createdTask));
-          }
-        },
+        (failure) => emit(TaskError(message: _mapFailureToMessage(failure))),
+        (createdTask) => emit(_getUpdatedTaskStateWithNewTask(createdTask)),
       );
     } catch (e) {
       emit(TaskError(message: 'Failed to create task: ${e.toString()}'));
@@ -111,19 +94,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           await updateTaskUseCase(TaskParams(task: event.task));
 
       failureOrSuccess.fold(
-        (failure) {
-          emit(TaskError(message: _mapFailureToMessage(failure)));
-        },
-        (updatedTask) {
-          if (state is TaskLoaded) {
-            final currentTasks = (state as TaskLoaded).tasks.map((task) {
-              return task.id == updatedTask.id ? updatedTask : task;
-            }).toList();
-            emit(TaskLoaded(tasks: currentTasks));
-          } else {
-            emit(TaskUpdated(task: updatedTask));
-          }
-        },
+        (failure) => emit(TaskError(message: _mapFailureToMessage(failure))),
+        (updatedTask) => emit(_getUpdatedTaskStateWithUpdatedTask(updatedTask)),
       );
     } catch (e) {
       emit(TaskError(message: 'Failed to update task: ${e.toString()}'));
@@ -135,27 +107,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final currentState = state;
     if (currentState is TaskLoaded) {
       try {
-        // Filter tasks for the specific group (project ID)
-        final groupTasks = currentState.tasks
-            .where((task) =>
-                _getProjectIdForGroup(event.groupId) == task.projectId)
-            .toList();
-
-        // Remove the task from its original position
-        final movedTask = groupTasks.removeAt(event.fromIndex);
-
-        // Insert the task at the new position
-        groupTasks.insert(event.toIndex, movedTask);
-
-        // Update the entire tasks list
-        final updatedTasks = currentState.tasks.map((task) {
-          // Replace tasks in this group with the reordered list
-          if (_getProjectIdForGroup(event.groupId) == task.projectId) {
-            return groupTasks[groupTasks.indexOf(task)];
-          }
-          return task;
-        }).toList();
-
+        final updatedTasks = _reorderTasks(currentState.tasks, event);
         emit(TaskLoaded(tasks: updatedTasks));
       } catch (e) {
         emit(TaskError(message: 'Failed to reorder tasks: ${e.toString()}'));
@@ -163,7 +115,47 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  // Helper method to get project ID based on group name
+  List<TaskEntity> _removeTaskFromList(List<TaskEntity> tasks, String taskId) {
+    return tasks.where((task) => task.id != taskId).toList();
+  }
+
+  TaskState _getUpdatedTaskStateWithNewTask(TaskEntity createdTask) {
+    if (state is TaskLoaded) {
+      final currentTasks = (state as TaskLoaded).tasks;
+      return TaskLoaded(tasks: [...currentTasks, createdTask]);
+    } else {
+      return TaskCreated(task: createdTask);
+    }
+  }
+
+  TaskState _getUpdatedTaskStateWithUpdatedTask(TaskEntity updatedTask) {
+    if (state is TaskLoaded) {
+      final currentTasks = (state as TaskLoaded).tasks.map((task) {
+        return task.id == updatedTask.id ? updatedTask : task;
+      }).toList();
+      return TaskLoaded(tasks: currentTasks);
+    } else {
+      return TaskUpdated(task: updatedTask);
+    }
+  }
+
+  List<TaskEntity> _reorderTasks(
+      List<TaskEntity> tasks, UpdateTaskOrderEvent event) {
+    final groupTasks = tasks
+        .where((task) => _getProjectIdForGroup(event.groupId) == task.projectId)
+        .toList();
+
+    final movedTask = groupTasks.removeAt(event.fromIndex);
+    groupTasks.insert(event.toIndex, movedTask);
+
+    return tasks.map((task) {
+      if (_getProjectIdForGroup(event.groupId) == task.projectId) {
+        return groupTasks[groupTasks.indexOf(task)];
+      }
+      return task;
+    }).toList();
+  }
+
   String _getProjectIdForGroup(String groupName) {
     switch (groupName) {
       case "To Do":
@@ -177,7 +169,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  // Helper method to map failure to message
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
       return 'Server failure: ${failure.message}';
